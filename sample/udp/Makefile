@@ -19,15 +19,17 @@ obj-m := ksocket_udp_srv_demo.o ksocket_udp_cli_demo.o
 KDIR  := /lib/modules/$(shell uname -r)/build
 PWD   := $(shell pwd)
 
-EXTRA_LDFLAGS := -I../../src
+EXTRA_LDFLAGS := -I/home/gndprop/dgist/ksocket/src
+KBUILD_EXTRA_SYMBOLS='/home/gndprop/dgist/ksocket/src/Module.symvers'
 
 ifeq ($(ADDRSAFE),true)
 	EXTRA_CFLAGS += -DKSOCKET_ADDR_SAFE
 endif
 
-default:
+all:
 	$(MAKE) -C $(KDIR) M=$(PWD) modules
 
 clean:
+	$(MAKE) -C $(KDIR) M=$(PWD) clean
 	rm -rf *.ko *.o *.mod.* .H* .tm* .*cmd Module.symvers modules.order
 

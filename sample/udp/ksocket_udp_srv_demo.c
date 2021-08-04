@@ -27,6 +27,8 @@
 
 #define BUF_SIZE 100
 
+struct task_struct *task;
+
 static int port = 4444;
 module_param(port, int, 0444);
 
@@ -88,8 +90,9 @@ int udp_srv(void *arg)
 
 static int ksocket_udp_srv_init(void)
 {
-	kthread_run(udp_srv, NULL, "tcp_srv_kthread");
-	
+	task = kthread_run(udp_srv, NULL, "tcp_srv_kthread");
+  get_task_struct(task);
+  wake_up_process(task);
 	printk("ksocket udp srv init ok\n");
 	return 0;
 }
@@ -97,6 +100,8 @@ static int ksocket_udp_srv_init(void)
 static void ksocket_udp_srv_exit(void)
 {
 	printk("ksocket udp srv exit\n");
+  kthread_stop(task);
+  put_task_struct(task);
 }
 
 module_init(ksocket_udp_srv_init);

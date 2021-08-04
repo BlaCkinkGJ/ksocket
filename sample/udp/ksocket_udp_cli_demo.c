@@ -27,6 +27,8 @@
 
 #define BUF_SIZE 100
 
+struct task_struct *task;
+
 int udp_cli(void *arg)
 {
 	ksocket_t sockfd_cli;
@@ -67,7 +69,9 @@ int udp_cli(void *arg)
 
 static int ksocket_udp_cli_init(void)
 {
-	kthread_run(udp_cli,NULL,"tcp_cli_kthread");
+	task = kthread_run(udp_cli,NULL,"tcp_cli_kthread");
+  get_task_struct(task);
+  wake_up_process(task);
 	printk("ksocket udp cli init ok\n");
 	return 0;
 }
@@ -75,6 +79,8 @@ static int ksocket_udp_cli_init(void)
 static void ksocket_udp_cli_exit(void)
 {
 	printk("ksocket udp cli exit\n");
+  kthread_stop(task);
+  put_task_struct(task);
 }
 
 module_init(ksocket_udp_cli_init);
