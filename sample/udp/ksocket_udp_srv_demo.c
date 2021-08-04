@@ -67,7 +67,7 @@ int udp_srv(void *arg)
 		return -1;
 	}
 	
-	while (1)
+	while (!kthread_should_stop())
 	{
 		memset(buf, 0, sizeof(buf));
 		len = krecvfrom(sockfd_srv, buf, sizeof(buf), 0,(struct sockaddr*)&addr_cli,&addr_len);
